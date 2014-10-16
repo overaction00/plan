@@ -12,4 +12,8 @@
 //
 //= require jquery
 //= require jquery_ujs
-//= require_tree .
+//= require angular-1.3.0
+//= require bootstrap-3.2.0
+//= require root
+//= require pages
+

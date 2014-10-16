@@ -1,0 +1,26 @@
+<div class="container">
+    <div class="col-xs-12" ng-controller="PagesController">
+        <div class="col-xs-2" ng-init="index()">
+            <ul>
+                <li ng-repeat="page in pages"><button ng-click="show(page.id)">{{page.name}}</button></li>
+            </ul>
+        </div>
+        <div class="col-xs-10">
+            <div class="border-row" ng-show="page">
+                <p>{{page.name}}</p>
+                <p>{{page.desc}}</p>
+            </div>
+            <div ng-show="elements">
+                <ul>
+                    <li ng-repeat="element in elements">
+                        <p>name: {{element.name}}</p>
+                        <p>category: {{element.category}}</p>
+                        <p>item id: {{element.item_id}}</p>
+                        <p>page containing element: {{element.pages}}</p>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
