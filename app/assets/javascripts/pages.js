@@ -10,13 +10,13 @@ angular.module("root").controller("PagesController", ["$http", "$scope", functio
     $scope.show = function(id) {
         $http.get("/pages/" + id).success(function(data, status, header, config){
             $scope.page = data;
-            $scope.elementsInPage(id)
+            $scope.elementsInPage(id);
         }).error(function(data, status, header, config) {
             $scope.page = undefined;
         });
     };
     $scope.elementsInPage = function(pageId) {
-        $http.get("/pages/" + pageId + "/elements").success(function(data, status, header, config){
+        $http.get("/pages/" + pageId + "/elements").success(function(data, status, header, config) {
             $scope.elements = data;
         }).error(function(data, status, header, config) {
             $scope.elements = undefined;
