@@ -1,40 +1,21 @@
 class PagesController < ApplicationController
   def index
-    @pages = [
-        {
-            id: '1',
-            name: 'page1',
-            url: '/pages/1',
-            desc: 'page1 desc'
-        },
-        {
-            id: '2',
-            name: 'page2',
-            url: '  /pages/2',
-            desc: 'page2 desc'
-        },
-        {
-            id: '3',
-            name: 'page3',
-            url: '/pages/3',
-            desc: 'page3 desc'
-        },
-        {
-            id: '4',
-            name: 'page4',
-            url: '/pages/4',
-            desc: 'page4 desc'
-        },
-    ]
+    @pages = Page.all
     render json: @pages
   end
 
   def show
-    @page = {
-        name: 'page' + params[:id].to_s,
-        url: '/pages/' + params[:id].to_s,
-        desc: "page#{params[:id]} desc"
-    }
+    begin
+      @page = Page.find(params[:id])
+    rescue ActiveRecord::RecordNotFound => e
+      return render nothing: true, status: :not_found
+    end
+    render json: @page
+  end
+
+  def create
+    @page = Page.new(params[:page])
+    render nothing: true, status: :internal_server_error unless @page.save
     render json: @page
   end
 

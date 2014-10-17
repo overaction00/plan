@@ -4,6 +4,74 @@
             <ul>
                 <li ng-repeat="page in pages"><button ng-click="show(page.id)">{{page.name}}</button></li>
             </ul>
+            <!--<div>-->
+                <!--&lt;!&ndash; Button trigger modal &ndash;&gt;-->
+                <!--<button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#register-page">-->
+                    <!--페이지 등록-->
+                <!--</button>-->
+
+                <!--&lt;!&ndash; Modal &ndash;&gt;-->
+                <!--<div class="modal fade" id="register-page" tabindex="-1" role="dialog" aria-labelledby="register-page-label" aria-hidden="true">-->
+                    <!--<div class="modal-dialog">-->
+                        <!--<div class="modal-content">-->
+                            <!--<div class="modal-header">-->
+                                <!--<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>-->
+                                <!--<h4 class="modal-title" id="register-page-label">새로운 페이지 등록</h4>-->
+                            <!--</div>-->
+                            <!--<div class="modal-body">-->
+                                <!--<form name="registerPageForm" method="post" ng-controller="PageFormController" ng-submit="submit()" class="register-page-form">-->
+                                    <!--페이지 이름-->
+                                    <!--<span class="error" ng-show="registerPageForm.pageNameInput.$error.required">Required!</span><br>-->
+                                    <!--<input name="pageNameInput" class="form-control" ng-model="pageName" required>-->
+                                    <!--<div class="vspace-30"></div>-->
+                                    <!--페이지 설명-->
+                                    <!--<textarea name="pageDescInput" class="form-control" ng-model="pageDesc"></textarea>-->
+                                    <!--&lt;!&ndash;<tt>pageName = {{pageName}}</tt><br>&ndash;&gt;-->
+                                    <!--&lt;!&ndash;<tt>registerPageForm.input.$valid = {{registerPageForm.pageNameInput.$valid}}</tt><br>&ndash;&gt;-->
+                                    <!--&lt;!&ndash;<tt>registerPageForm.input.$error = {{registerPageForm.pageNameInput.$error}}</tt><br>&ndash;&gt;-->
+                                    <!--&lt;!&ndash;<tt>registerPageForm.$valid = {{registerPageForm.$valid}}</tt><br>&ndash;&gt;-->
+                                    <!--&lt;!&ndash;<tt>registerPageForm.$error.required = {{!!registerPageForm.$error.required}}</tt><br>&ndash;&gt;-->
+                                    <!--<div class="modal-footer">-->
+                                        <!--<button type="button" class="btn btn-default" data-dismiss="modal">취소</button>-->
+                                        <!--<button type="submit" class="btn btn-primary">저장하기</button>-->
+                                    <!--</div>-->
+                                <!--</form>-->
+                            <!--</div>-->
+                            <!--<div class="modal-footer">-->
+                            <!--</div>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</div>-->
+            <div>
+                <div ng-controller="RegisterPageModalController">
+                    <script type="text/ng-template" id="registerPageModal.html">
+                        <div class="modal-header">
+                            <h3 class="modal-title">I'm a modal!</h3>
+                        </div>
+                        <div class="modal-body">
+                            <form name="registerPageForm" method="post" ng-submit="submit()" class="register-page-form">
+                                페이지 이름
+                                <span class="error" ng-show="registerPageForm.pageNameInput.$error.required">Required!</span><br>
+                                <input name="pageNameInput" class="form-control" ng-model="pageName" required>
+                                <div class="vspace-30"></div>
+                                페이지 설명
+                                <textarea name="pageDescInput" class="form-control" ng-model="pageDesc"></textarea>
+                                <!--<tt>pageName = {{pageName}}</tt><br>-->
+                                <!--<tt>registerPageForm.input.$valid = {{registerPageForm.pageNameInput.$valid}}</tt><br>-->
+                                <!--<tt>registerPageForm.input.$error = {{registerPageForm.pageNameInput.$error}}</tt><br>-->
+                                <!--<tt>registerPageForm.$valid = {{registerPageForm.$valid}}</tt><br>-->
+                                <!--<tt>registerPageForm.$error.required = {{!!registerPageForm.$error.required}}</tt><br>-->
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                        <button type="button" class="btn btn-default" ng-click="cancel()">취소</button>
+                        <button type="submit" class="btn btn-primary" ng-click="ok()">저장하기</button>
+                        </div>
+                    </script>
+                    <button class="btn btn-default" ng-click="open()">페이지 등록</button>
+                </div>
+            </div>
         </div>
         <div class="col-xs-10">
             <div class="border-row" ng-show="page">
