@@ -28,6 +28,9 @@ angular.module("root").controller("ItemsController", ["$http", "$scope", "shared
 }]);
 
 angular.module("root").controller('RegisterItemModalController', function ($scope, $modal, $log) {
+    $scope.init = function() {
+        console.log("call init");
+    };
     $scope.open = function () {
         var modalInstance = $modal.open({
             templateUrl: 'registerItemModal.html',

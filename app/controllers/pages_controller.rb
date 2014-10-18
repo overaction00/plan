@@ -6,7 +6,7 @@ class PagesController < ApplicationController
 
   def show
     begin
-      @page = Page.find(params[:id])
+      @page = Page.includes(:items).find(params[:id])
     rescue ActiveRecord::RecordNotFound
       return render nothing: true, status: :not_found
     end
@@ -21,12 +21,10 @@ class PagesController < ApplicationController
 
   def items
     begin
-      @items = Page.find(params[:page_id]).items
+      @items = Page.includes(:items).find(params[:page_id]).items
     rescue ActiveRecord::RecordNotFound
       return render nothing: true, status: :not_found
     end
-    json =  @items.to_json(include: :pages)
-    puts json
-    render json: json
+    render json: @items.to_json(include: :pages)
   end
 end

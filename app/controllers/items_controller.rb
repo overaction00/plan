@@ -8,6 +8,6 @@ class ItemsController < ApplicationController
     @item = Item.new(params[:item])
     render nothing: true, status: :internal_server_error unless @item.save
     @page.items << @item
-    render json: @item
+    render json: @item.to_json(include: :pages)
   end
 end

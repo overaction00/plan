@@ -3,7 +3,7 @@
         <div class="col-xs-2" ng-init="index()">
             <div class="vspace-30"></div>
             <ul class="nav nav-pills nav-stacked">
-                <li ng-class="{active: page.id == currentPageId}" ng-repeat="page in pages"><a ng-click="show(page.id)">{{page.name}}</a></li>
+                <li ng-class="{active: page.id === currentPageId}" ng-repeat="page in pages"><a ng-click="show(page.id)">{{page.name}}</a></li>
             </ul>
             <div>
                 <div ng-controller="RegisterPageModalController">
@@ -31,11 +31,10 @@
             </div>
         </div>
         <div class="col-xs-10" ng-controller="ItemsController">
-            <div class="border-row" ng-show="page">
-                <h3>{{page.name}}<br/><small>{{page.desc}}</small></h3>
-
+            <div class="page-header border-row" ng-show="page">
+                <h1>{{page.name}}<br/><small>{{page.desc}}</small></h1>
             </div>
-            <div ng-controller="RegisterItemModalController">
+            <div ng-controller="RegisterItemModalController" ng-init="init()">
                 <script type="text/ng-template" id="registerItemModal.html">
                     <div class="modal-header">
                         <h3 class="modal-title">새로운 아이템 등록</h3>
@@ -47,7 +46,12 @@
                             <input id="item-name-input" name="itemNameInput" class="form-control" ng-model="itemName" required>
                             <div class="vspace-30"></div>
                             <label for="item-category-input">아이템 종류</label>
+                            <div class="btn-group btn-group-sm">
+                                <button type="button" class="btn btn-default">검색</button>
+                                <button type="button" class="btn btn-default">새로운 아이템</button>
+                            </div>
                             <span class="error" ng-show="registerItemForm.itemCategoryInput.$error.required">Required!</span><br>
+                            <div class="vspace-10"></div>
                             <input id="item-category-input" name="itemCategoryInput" class="form-control" ng-model="itemCategory" required>
                             <div class="vspace-30"></div>
                             <label for="item-desc-input">아이템 설명</label>
