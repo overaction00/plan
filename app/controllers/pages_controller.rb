@@ -7,7 +7,7 @@ class PagesController < ApplicationController
   def show
     begin
       @page = Page.find(params[:id])
-    rescue ActiveRecord::RecordNotFound => e
+    rescue ActiveRecord::RecordNotFound
       return render nothing: true, status: :not_found
     end
     render json: @page
@@ -19,31 +19,12 @@ class PagesController < ApplicationController
     render json: @page
   end
 
-  def elements
-    @page = params[:page_id]
-    @elements = [
-        {
-            id: '1',
-            item_id: '1',
-            name: 'logo',
-            category: 'a',
-            pages: ['page1']
-        },
-        {
-            id: '2',
-            item_id: '2',
-            name: 'login button',
-            category: 'button',
-            pages: %w(page2 page3)
-        },
-        {
-            id: '3',
-            item_id: '2',
-            name: 'login button',
-            category: 'button',
-            pages: %w(page3 page4)
-        },
-    ]
-    render json: @elements
+  def items
+    begin
+      @page = Page.find(params[:page_id])
+    rescue ActiveRecord::RecordNotFound
+      return render nothing: true, status: :not_found
+    end
+    render json: @page.items
   end
 end

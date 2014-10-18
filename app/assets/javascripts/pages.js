@@ -10,23 +10,28 @@ angular.module("root").controller("PagesController", ["$http", "$scope", "shared
     $scope.show = function(id) {
         $http.get("/pages/" + id).success(function(data, status, header, config){
             $scope.page = data;
-            $scope.elementsInPage(id);
+            $scope.pageItems(id);
+            $scope.currentPageId = id;
         }).error(function(data, status, header, config) {
             $scope.page = undefined;
         });
     };
-    $scope.elementsInPage = function(pageId) {
-        $http.get("/pages/" + pageId + "/elements").success(function(data, status, header, config) {
-            $scope.elements = data;
+    $scope.pageItems = function(pageId) {
+        $http.get("/pages/" + pageId + "/items").success(function(data, status, header, config) {
+            $scope.items = data;
         }).error(function(data, status, header, config) {
-            $scope.elements = undefined;
+            $scope.items = undefined;
         });
     };
+
     $scope.$on('pushBroadcast', function() {
+        if (sharedModelService.kind !== "page") {
+            return false;
+        }
         var name = sharedModelService.model.name;
         var desc = sharedModelService.model.desc;
 
-        $http.post('/pages', {page: {name: name, desc: desc}}).
+        $http.post("/pages", {page: {name: name, desc: desc}}).
             success(function(data, status, headers, config) {
                 if (!$scope.pages) {
                     $scope.pages = [];
@@ -43,7 +48,7 @@ angular.module("root").controller('RegisterPageModalController', function ($scop
     $scope.open = function () {
         var modalInstance = $modal.open({
             templateUrl: 'registerPageModal.html',
-            controller: 'ModalInstanceController'
+            controller: 'PageModalInstanceController'
         });
 
         modalInstance.result.then(function () {
@@ -54,13 +59,13 @@ angular.module("root").controller('RegisterPageModalController', function ($scop
     };
 });
 
-angular.module("root").controller('ModalInstanceController',
+angular.module("root").controller('PageModalInstanceController',
     ["$scope", "$modalInstance", "sharedModelService",
     function ($scope, $modalInstance, sharedModelService) {
     $scope.isOpen = false;
     $scope.ok = function () {
         if ($scope.pageName) {
-            sharedModelService.pushItem({name: $scope.pageName, desc: $scope.pageDesc})
+            sharedModelService.pushItem("page", {name: $scope.pageName, desc: $scope.pageDesc})
         }
         $modalInstance.close();
     };

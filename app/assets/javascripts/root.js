@@ -22,7 +22,8 @@ root.controller("HelloController", function($scope) {
 root.factory('sharedModelService', function($rootScope) {
     var sharedModelService = {};
     sharedModelService.model = "";
-    sharedModelService.pushItem = function(msg) {
+    sharedModelService.pushItem = function(kind, msg) {
+        this.kind = kind;
         this.model = msg;
         this.broadcastPushItem();
     };

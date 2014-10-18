@@ -17,4 +17,4 @@
 //= require ui-bootstrap-tpls-0.11.2
 //= require root
 //= require pages
-
+//= require items
