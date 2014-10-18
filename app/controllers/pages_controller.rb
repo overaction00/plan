@@ -21,10 +21,12 @@ class PagesController < ApplicationController
 
   def items
     begin
-      @page = Page.find(params[:page_id])
+      @items = Page.find(params[:page_id]).items
     rescue ActiveRecord::RecordNotFound
       return render nothing: true, status: :not_found
     end
-    render json: @page.items
+    json =  @items.to_json(include: :pages)
+    puts json
+    render json: json
   end
 end

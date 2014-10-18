@@ -1,8 +1,9 @@
 <div class="container">
     <div class="col-xs-12" ng-controller="PagesController">
         <div class="col-xs-2" ng-init="index()">
-            <ul>
-                <li ng-repeat="page in pages"><button ng-click="show(page.id)">{{page.name}}</button></li>
+            <div class="vspace-30"></div>
+            <ul class="nav nav-pills nav-stacked">
+                <li ng-class="{active: page.id == currentPageId}" ng-repeat="page in pages"><a ng-click="show(page.id)">{{page.name}}</a></li>
             </ul>
             <div>
                 <div ng-controller="RegisterPageModalController">
@@ -12,12 +13,12 @@
                         </div>
                         <div class="modal-body">
                             <form name="registerPageForm" method="post" class="register-page-form">
-                                페이지 이름
+                                <label for="page-name-input">페이지 이름</label>
                                 <span class="error" ng-show="registerPageForm.pageNameInput.$error.required">Required!</span><br>
-                                <input name="pageNameInput" class="form-control" ng-model="pageName" required>
+                                <input id="page-name-input" name="pageNameInput" class="form-control" ng-model="pageName" required>
                                 <div class="vspace-30"></div>
-                                페이지 설명
-                                <textarea name="pageDescInput" class="form-control" ng-model="pageDesc"></textarea>
+                                <label for="page-desc-input">페이지 설명</label>
+                                <textarea id="page-desc-input" name="pageDescInput" class="form-control" ng-model="pageDesc"></textarea>
                             </form>
                         </div>
                         <div class="modal-footer">
@@ -31,8 +32,8 @@
         </div>
         <div class="col-xs-10" ng-controller="ItemsController">
             <div class="border-row" ng-show="page">
-                <p>{{page.name}}</p>
-                <p>{{page.desc}}</p>
+                <h3>{{page.name}}<br/><small>{{page.desc}}</small></h3>
+
             </div>
             <div ng-controller="RegisterItemModalController">
                 <script type="text/ng-template" id="registerItemModal.html">
@@ -58,17 +59,31 @@
                         <button type="submit" class="btn btn-primary" ng-click="ok()">저장하기</button>
                     </div>
                 </script>
+                <div class="vspace-20"></div>
                 <button class="btn btn-default" ng-click="open()">새로운 아이템 등록</button>
             </div>
-            <div ng-show="items">
-                <ul>
-                    <li ng-repeat="item in items">
-                        <p>name: {{item.name}}</p>
-                        <p>category: {{item.category}}</p>
-                        <p>desc: {{item.desc}}</p>
-                        <p>item id: {{item.id}}</p>
-                    </li>
-                </ul>
+            <div ng-show="items.length > 0">
+                <div class="vspace-20"></div>
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th>이름</th>
+                            <th>카테고리</th>
+                            <th>설명</th>
+                            <th>아이템 번호</th>
+                            <th>관련 페이지</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="item in items">
+                            <td>{{item.name}}</td>
+                            <td>{{item.category}}</td>
+                            <td>{{item.desc}}</td>
+                            <td>{{item.id}}</td>
+                            <td><b ng-repeat="page in item.pages">{{page.name}}{{$last ? '' : ', '}}</b></td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
