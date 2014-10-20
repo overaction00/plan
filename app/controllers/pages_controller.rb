@@ -38,4 +38,17 @@ class PagesController < ApplicationController
     @page.items << @item
     render json: @item.to_json(include: :pages)
   end
+
+  def remove_items
+    begin
+      @page = Page.find(params[:page_id])
+    rescue ActiveRecord::RecordNotFound
+      render nothing: true, status: :not_found
+    end
+    item_ids = JSON.parse(params[:item_ids])
+    @affected_items = @page.page_items.where(item_id: item_ids).destroy_all
+    return render json: @affected_items if item_ids.size == @affected_items.size
+    return render nothing: true, status: :bad_request if @affected_items.present?
+    render nothing: true, status: :internal_server_error
+  end
 end

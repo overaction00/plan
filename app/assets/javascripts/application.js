@@ -16,6 +16,7 @@
 //= require bootstrap-3.2.0
 //= require ui-bootstrap-tpls-0.11.2
 //= require bootstrap-typeahead
+//= require underscore-1.6.0
 //= require root
 //= require pages
 //= require items
