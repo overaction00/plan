@@ -14,7 +14,7 @@
                         <div class="modal-body">
                             <form name="registerPageForm" method="post" class="register-page-form">
                                 <label for="page-name-input">페이지 이름</label>
-                                <span class="error" ng-show="registerPageForm.pageNameInput.$error.required">Required!</span><br>
+                                <span class="error" ng-show="registerPageForm.pageNameInput.$error.required">Required!</span><br />
                                 <input id="page-name-input" name="pageNameInput" class="form-control" ng-model="pageName" required>
                                 <div class="vspace-30"></div>
                                 <label for="page-desc-input">페이지 설명</label>
@@ -37,25 +37,27 @@
             <div ng-controller="RegisterItemModalController" ng-init="init()">
                 <script type="text/ng-template" id="registerItemModal.html">
                     <div class="modal-header">
-                        <h3 class="modal-title">새로운 아이템 등록</h3>
+                        <div style="display:inline-block;"><h3 class="modal-title">페이지 아이템 등록</h3></div>
+                        <div class="btn-group btn-group-sm pull-right">
+                            <button type="button" class="btn btn-default" ng-class="{active: !$parent.isNewItem}" ng-click="setIsNewItem(false)">검색</button>
+                            <button type="button" class="btn btn-default" ng-class="{active: $parent.isNewItem}" ng-click="setIsNewItem(true)">새로운 아이템</button>
+                        </div>
                     </div>
                     <div class="modal-body">
                         <form name="registerItemForm" method="post" class="register-item-form">
+                            <label for="item-search-input" ng-show="!$parent.isNewItem">아이템 검색</label>
+                            <input id="item-search-input" name="itemSearchInput" class="form-control" ng-show="!$parent.isNewItem" ng-model="itemSearch" typeahead="item for item in searchNames($viewValue)" typeahead-on-select="onSelect($item)">
+                            <div class="vspace-30"></div>
                             <label for="item-name-input">아이템 이름</label>
-                            <span class="error" ng-show="registerItemForm.itemNameInput.$error.required">Required!</span><br>
-                            <input id="item-name-input" name="itemNameInput" class="form-control" ng-model="itemName" required>
+                            <span class="error" ng-show="registerItemForm.itemNameInput.$error.required">Required!</span><br />
+                            <input id="item-name-input" name="itemNameInput" class="form-control" ng-disabled="!$parent.isNewItem" ng-model="itemName" required>
                             <div class="vspace-30"></div>
                             <label for="item-category-input">아이템 종류</label>
-                            <div class="btn-group btn-group-sm">
-                                <button type="button" class="btn btn-default">검색</button>
-                                <button type="button" class="btn btn-default">새로운 아이템</button>
-                            </div>
-                            <span class="error" ng-show="registerItemForm.itemCategoryInput.$error.required">Required!</span><br>
-                            <div class="vspace-10"></div>
-                            <input id="item-category-input" name="itemCategoryInput" class="form-control" ng-model="itemCategory" required>
+                            <span class="error" ng-show="registerItemForm.itemCategoryInput.$error.required">Required!</span><br />
+                            <input id="item-category-input" name="itemCategoryInput" class="form-control" ng-disabled="!$parent.isNewItem" ng-model="itemCategory" required>
                             <div class="vspace-30"></div>
                             <label for="item-desc-input">아이템 설명</label>
-                            <textarea id="item-desc-input" name="itemDescInput" class="form-control" ng-model="itemDesc"></textarea>
+                            <textarea id="item-desc-input" name="itemDescInput" class="form-control" ng-disabled="!$parent.isNewItem" ng-model="itemDesc"></textarea>
                         </form>
                     </div>
                     <div class="modal-footer">

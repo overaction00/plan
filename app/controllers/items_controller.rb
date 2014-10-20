@@ -10,4 +10,8 @@ class ItemsController < ApplicationController
     @page.items << @item
     render json: @item.to_json(include: :pages)
   end
+
+  def search_items
+    render json: Item.where(Item.arel_table[:name].matches("%#{params[:q]}%")).limit(10)
+  end
 end

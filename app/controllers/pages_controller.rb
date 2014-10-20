@@ -27,4 +27,15 @@ class PagesController < ApplicationController
     end
     render json: @items.to_json(include: :pages)
   end
+
+  def add_item
+    begin
+      @page = Page.find(params[:page_id])
+      @item = Item.find_by_name(params[:item][:name])
+    rescue ActiveRecord::RecordNotFound
+      render nothing: true, status: :not_found
+    end
+    @page.items << @item
+    render json: @item.to_json(include: :pages)
+  end
 end

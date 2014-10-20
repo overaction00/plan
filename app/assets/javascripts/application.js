@@ -15,7 +15,7 @@
 //= require angular-1.3.0
 //= require bootstrap-3.2.0
 //= require ui-bootstrap-tpls-0.11.2
-//= require typeahead.jquery-0.10.5
+//= require bootstrap-typeahead
 //= require root
 //= require pages
 //= require items

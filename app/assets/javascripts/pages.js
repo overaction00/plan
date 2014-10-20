@@ -52,7 +52,6 @@ angular.module("root").controller('RegisterPageModalController', function ($scop
         });
 
         modalInstance.result.then(function () {
-            $scope.isOpen = true;
         }, function () {
             $log.info('Modal dismissed at: ' + new Date());
         });
@@ -62,15 +61,14 @@ angular.module("root").controller('RegisterPageModalController', function ($scop
 angular.module("root").controller('PageModalInstanceController',
     ["$scope", "$modalInstance", "sharedModelService",
     function ($scope, $modalInstance, sharedModelService) {
-    $scope.isOpen = false;
     $scope.ok = function () {
         if ($scope.pageName) {
             sharedModelService.pushItem("page", {name: $scope.pageName, desc: $scope.pageDesc})
         }
         $modalInstance.close();
     };
-
     $scope.cancel = function () {
         $modalInstance.dismiss('cancel');
     };
+
 }]);
