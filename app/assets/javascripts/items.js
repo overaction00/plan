@@ -3,15 +3,20 @@ angular.module("root").controller("ItemsController",
     function($http, $scope, $modal, $log, sharedModelService) {
     $scope.init = function() {
         $scope.checkedItemList = [];
-        $scope.isNewItem = false;
+        $scope.mode = "create"; // create, update, append
     };
-    $scope.checkItem = function(id) {
+    $scope.checkItem = function(e, id) {
+        e.stopPropagation();
         var index = _.indexOf($scope.checkedItemList, id);
         if (index >= 0) {
             $scope.checkedItemList.splice(index, 1);
         } else {
             $scope.checkedItemList.push(id);
         }
+    };
+    $scope.removeItem = function(id) {
+        $scope.checkedItemList = [id];
+        $scope.removeItems();
     };
     $scope.removeItems = function() {
         if ($scope.checkedItemList.length <= 0) {
@@ -37,13 +42,6 @@ angular.module("root").controller("ItemsController",
         if (sharedModelService.kind !== "item") {
             return false;
         }
-        var name = sharedModelService.model.name;
-        var category = sharedModelService.model.category;
-        var desc = sharedModelService.model.desc;
-        var isNewItem = sharedModelService.model.isNewItem;
-
-        var url = isNewItem ? "/items" : "/pages/" + $scope.$parent.currentPageId + "/add_item";
-
         function containsObjectAttr(arr, attrName, value) {
             for (var i = 0; i < arr.length; i++) {
                 if (arr[i][attrName] === value) {
@@ -52,47 +50,88 @@ angular.module("root").controller("ItemsController",
             }
             return -1;
         }
+        var id = sharedModelService.model.id;
+        var name = sharedModelService.model.name;
+        var category = sharedModelService.model.category;
+        var desc = sharedModelService.model.desc;
+        var mode = sharedModelService.model.mode;
+        var url = (mode === "append") ?
+            "/pages/" + $scope.$parent.currentPageId + "/add_item" :
+            (mode === "create") ? "/items" : "/items/" + id;
 
-        if (!isNewItem && containsObjectAttr($scope.$parent.items, "name", name) >= 0) {
+        if (mode === "append" && containsObjectAttr($scope.$parent.items, "name", name) >= 0) {
             alert("Already contains item name: " + name);
             return false;
         }
 
-        $http.post(url, {
-            page_id: $scope.$parent.currentPageId,
-            is_new_item: isNewItem,
-            item: {
-                name: name,
-                category: category,
-                desc: desc
+        $http({
+            url: url,
+            method: ($scope.mode === "update") ? "PUT" : "POST",
+            params: {
+                page_id: $scope.$parent.currentPageId,
+                is_new_item: ($scope.mode === "create"),
+                item: {
+                    id: id,
+                    name: name,
+                    category: category,
+                    desc: desc
+                }
             }
         })
         .success(function(data, status, headers, config) {
             if (!$scope.$parent.items) {
                 $scope.$parent.items = [];
             }
-            $scope.$parent.items.push(data);
+            if ($scope.mode === "update") {
+                for (var i = 0; i < $scope.$parent.items.length; i++) {
+                    if ($scope.$parent.items[i].id === data.id) {
+                        $scope.$parent.items[i] = data;
+                    }
+                }
+            } else {
+                $scope.$parent.items.push(data);
+            }
         }).
         error(function(data, status, headers, config) {
             alert("아이템 등록에 실패: " + status);
         });
     });
-    $scope.modalOpen = function () {
+    $scope.modalOpen = function (mode, id) {
+        $scope.mode = mode;
+        if (typeof id !== "undefined") {
+            $scope.selectedItem = _.findWhere($scope.$parent.items, {id: id});
+        }
         var modalInstance = $modal.open({
             templateUrl: 'registerItemModal.html',
-            controller: 'ItemModalInstanceController'
+            controller: 'ItemModalInstanceController',
+            scope: $scope,
+            resolve: {
+                selectedItem: function () {
+                    return $scope.selectedItem;
+                }
+            }
         });
         modalInstance.result.then(function () {
+            $scope.selectedItem = undefined;
         }, function () {
+            $scope.selectedItem = undefined;
             $log.info('Modal dismissed at: ' + new Date());
         });
+
     };
 }]);
 
 angular.module("root").controller('ItemModalInstanceController',
-    ["$scope", "$http", "$modalInstance", "limitToFilter", "sharedModelService",
-    function ($scope, $http, $modalInstance, limitToFilter, sharedModelService) {
+    ["$scope", "$http", "$modalInstance", "limitToFilter", "sharedModelService", "selectedItem",
+    function ($scope, $http, $modalInstance, limitToFilter, sharedModelService, selectedItem) {
     $scope.searchResults = [];
+
+    if (selectedItem) {
+        $scope.itemId = selectedItem.id;
+        $scope.itemName = selectedItem.name;
+        $scope.itemCategory = selectedItem.category;
+        $scope.itemDesc = selectedItem.desc;
+    }
     $scope.searchNames = function(q) {
         return $http.get("/search_items?q=" + q).then(function(response){
             $scope.searchResults = response.data;
@@ -101,10 +140,11 @@ angular.module("root").controller('ItemModalInstanceController',
             });
         });
     };
-    $scope.onSelect = function($item) {
+    $scope.onTypeAHeadSelect = function($item) {
         for (var i = 0; i < $scope.searchResults.length; i++) {
             var current = $scope.searchResults[i];
             if (current.name == $item) {
+                $scope.itemId = current.id;
                 $scope.itemName = current.name;
                 $scope.itemCategory = current.category;
                 $scope.itemDesc = current.desc;
@@ -114,18 +154,42 @@ angular.module("root").controller('ItemModalInstanceController',
     $scope.ok = function () {
         if ($scope.itemName) {
             sharedModelService.pushItem("item", {
+                id: $scope.itemId,
                 name: $scope.itemName,
                 category: $scope.itemCategory,
                 desc: $scope.itemDesc,
-                isNewItem: $scope.isNewItem
+                mode: $scope.mode
             });
         }
         $modalInstance.close();
     };
+    $scope.remove = function() {
+        if ($scope.itemId) {
+            if ( window.confirm("아이템을 삭제 할까요?") ) {
+                $scope.removeItem($scope.itemId);
+                $modalInstance.dismiss("remove");
+                return true;
+            }
+            $modalInstance.dismiss("bug: not reachable");
+        }
+        $modalInstance.dismiss("bug: not reachable");
+    };
     $scope.cancel = function () {
+        $scope.clearFields();
         $modalInstance.dismiss("cancel");
     };
-    $scope.setIsNewItem = function(setValue) {
-        $scope.$parent.isNewItem = setValue;
+    $scope.setMode = function(mode) {
+        $scope.clearFields();
+        $scope.mode = mode;
+    };
+    $scope.isEditable = function() {
+        return $scope.mode === "create" || $scope.mode === "update";
+    };
+    $scope.clearFields = function() {
+        $scope.itemId = "";
+        $scope.itemName = "";
+        $scope.itemCategory = "";
+        $scope.itemDesc = "";
+        $scope.itemSearch = "";
     };
 }]);

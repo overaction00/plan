@@ -31,7 +31,7 @@ class PagesController < ApplicationController
   def add_item
     begin
       @page = Page.find(params[:page_id])
-      @item = Item.find_by_name(params[:item][:name])
+      @item = Item.find(JSON.parse(params[:item])['id'])
     rescue ActiveRecord::RecordNotFound
       render nothing: true, status: :not_found
     end

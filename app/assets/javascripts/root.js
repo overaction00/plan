@@ -8,7 +8,6 @@ root.config([
         $httpProvider.defaults.headers.post['X-CSRF-Token'] = csrfToken;
         $httpProvider.defaults.headers.put['X-CSRF-Token'] = csrfToken;
         $httpProvider.defaults.headers.patch['X-CSRF-Token'] = csrfToken;
-//        $httpProvider.defaults.headers.delete['X-CSRF-Token'] = csrfToken;
     }
 ]);
 
@@ -21,7 +20,7 @@ root.controller("HelloController", function($scope) {
 
 root.factory('sharedModelService', function($rootScope) {
     var sharedModelService = {};
-    sharedModelService.model = "";
+    sharedModelService.model = {};
     sharedModelService.pushItem = function(kind, msg) {
         this.kind = kind;
         this.model = msg;
