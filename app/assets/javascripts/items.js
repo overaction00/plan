@@ -18,6 +18,12 @@ angular.module("root").controller("ItemsController",
         $scope.checkedItemList = [id];
         $scope.removeItems();
     };
+    $scope.removeSelectedItems = function() {
+        if (window.confirm("선택한 아이템을 삭제 할까요?")) {
+            $scope.removeItems();
+            return true;
+        }
+    };
     $scope.removeItems = function() {
         if ($scope.checkedItemList.length <= 0) {
             return false;
@@ -28,13 +34,14 @@ angular.module("root").controller("ItemsController",
                 item_ids: JSON.stringify($scope.checkedItemList)
             }
         })
-        .success(function(data, status, headers, config) {
+        .success(function(data) {
             _.each(data, function(e) {
+                /** @namespace e.item_id */
                 $scope.$parent.items = _.without($scope.$parent.items, _.findWhere($scope.$parent.items, {id: e.item_id}));
             });
             $scope.checkedItemList = [];
         }).
-        error(function(data, status, headers, config) {
+        error(function(data, status) {
             alert("아이템 삭제에 실패: " + status);
         });
     };
@@ -78,7 +85,7 @@ angular.module("root").controller("ItemsController",
                 }
             }
         })
-        .success(function(data, status, headers, config) {
+        .success(function(data) {
             if (!$scope.$parent.items) {
                 $scope.$parent.items = [];
             }
@@ -92,7 +99,7 @@ angular.module("root").controller("ItemsController",
                 $scope.$parent.items.push(data);
             }
         }).
-        error(function(data, status, headers, config) {
+        error(function(data, status) {
             alert("아이템 등록에 실패: " + status);
         });
     });
@@ -165,7 +172,7 @@ angular.module("root").controller('ItemModalInstanceController',
     };
     $scope.remove = function() {
         if ($scope.itemId) {
-            if ( window.confirm("아이템을 삭제 할까요?") ) {
+            if (window.confirm("아이템을 삭제 할까요?")) {
                 $scope.removeItem($scope.itemId);
                 $modalInstance.dismiss("remove");
                 return true;

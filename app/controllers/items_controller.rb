@@ -18,11 +18,7 @@ class ItemsController < ApplicationController
       render nothing: true, status: :not_found
     end
 
-    if @item.update_attributes(JSON.parse(params[:item]))
-      render json: @item.to_json(include: :pages)
-    else
-      render nothing: true, status: :bad_request
-    end
+    render json: @item.update_attributes(JSON.parse(params[:item])).to_json(include: :pages)
   end
 
   def search_items

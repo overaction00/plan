@@ -1,25 +1,31 @@
-angular.module("root").controller("PagesController", ["$http", "$scope", "sharedModelService", function($http, $scope, sharedModelService) {
+angular.module("root").controller("PagesController", ["$http", "$scope", "$log", "sharedModelService", function($http, $scope, $log, sharedModelService) {
     $scope.index = function() {
-        $http.get("/pages").success(function(data, status, header, config){
+        $http.get("/pages").success(function(data){
             $scope.pages = data;
             $scope.show(data[0].id);
-        }).error(function(data, status, header, config) {
+        }).error(function(data, status) {
+            alert("페이지 목록을 불러오는데 실패 했습니다.");
+            $log.error(status + ": " + data);
             $scope.pages = undefined;
         });
     };
     $scope.show = function(id) {
-        $http.get("/pages/" + id).success(function(data, status, header, config){
+        $http.get("/pages/" + id).success(function(data){
             $scope.page = data;
             $scope.pageItems(id);
             $scope.currentPageId = id;
-        }).error(function(data, status, header, config) {
+        }).error(function(data, status) {
+            alert("페이지를 불러오는데 실패 했습니다.");
+            $log.error(status + ": " + data);
             $scope.page = undefined;
         });
     };
     $scope.pageItems = function(pageId) {
-        $http.get("/pages/" + pageId + "/items").success(function(data, status, header, config) {
+        $http.get("/pages/" + pageId + "/items").success(function(data) {
             $scope.items = data;
-        }).error(function(data, status, header, config) {
+        }).error(function(data, status) {
+            alert("아이템 목록을 불러오는데 실패 했습니다.");
+            $log.error(status + ": " + data);
             $scope.items = undefined;
         });
     };
@@ -32,13 +38,13 @@ angular.module("root").controller("PagesController", ["$http", "$scope", "shared
         var desc = sharedModelService.model.desc;
 
         $http.post("/pages", {page: {name: name, desc: desc}}).
-            success(function(data, status, headers, config) {
+            success(function(data) {
                 if (!$scope.pages) {
                     $scope.pages = [];
                 }
                 $scope.pages.push(data);
             }).
-            error(function(data, status, headers, config) {
+            error(function(data, status) {
                 alert("페이지 등록에 실패: " + status);
             });
     });
@@ -62,6 +68,8 @@ angular.module("root").controller('PageModalInstanceController',
     ["$scope", "$modalInstance", "sharedModelService",
     function ($scope, $modalInstance, sharedModelService) {
     $scope.ok = function () {
+        /** @namespace $scope.pageName */
+        /** @namespace $scope.pageDesc */
         if ($scope.pageName) {
             sharedModelService.pushItem("page", {name: $scope.pageName, desc: $scope.pageDesc})
         }
@@ -70,5 +78,4 @@ angular.module("root").controller('PageModalInstanceController',
     $scope.cancel = function () {
         $modalInstance.dismiss('cancel');
     };
-
 }]);
