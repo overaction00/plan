@@ -19,6 +19,21 @@ class PagesController < ApplicationController
     render json: @page
   end
 
+  def destroy
+    ap params
+    ap params[:id]
+    begin
+      @page = Page.find(params[:id])
+    rescue ActiveRecord::RecordNotFound
+      return render nothing: true, status: :not_found
+    end
+    if @page.destroy
+      render json: @page
+    else
+      render nothing: true, status: :internal_server_error
+    end
+  end
+
   def items
     begin
       @items = Page.includes(:items).find(params[:page_id]).items

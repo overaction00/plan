@@ -20,6 +20,18 @@ angular.module("root").controller("PagesController", ["$http", "$scope", "$log",
             $scope.page = undefined;
         });
     };
+    $scope.remove = function(id) {
+        if (window.confirm("페이지를 삭제할까요?")) {
+            $http.delete("/pages/" + id, {
+            })
+            .success(function(data) {
+                $scope.pages = _.without($scope.pages, _.findWhere($scope.pages, { id: data.id }));
+            }).error(function(data, status) {
+                alert("페이지를 삭제하는데 실패 했습니다.");
+                $log.error(status + ": " + data);
+            });
+        }
+    };
     $scope.pageItems = function(pageId) {
         $http.get("/pages/" + pageId + "/items").success(function(data) {
             $scope.items = data;

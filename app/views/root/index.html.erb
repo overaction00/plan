@@ -30,11 +30,16 @@
                 </div>
             </div>
         </div>
-        <div class="col-xs-10" ng-controller="ItemsController" ng-init="init()">
+        <div class="col-xs-10">
             <div class="page-header border-row" ng-show="page">
-                <h1>{{page.name}}<br/><small>{{page.desc}}</small></h1>
+                <div class="inline-block">
+                    <h1>{{page.name}}<br/><small>{{page.desc}}</small></h1>
+                </div>
+                <div class="pull-right">
+                    <button class="btn btn-default" ng-click="remove(currentPageId)">페이지 삭제하기</button>
+                </div>
             </div>
-            <div>
+            <div ng-controller="ItemsController" ng-init="init()">
                 <script type="text/ng-template" id="registerItemModal.html">
                     <div class="modal-header">
                         <div style="display:inline-block;"><h3 class="modal-title">페이지 아이템 {{mode === "update" ? "수정" : "등록"}}</h3></div>
@@ -69,31 +74,31 @@
                 <div class="vspace-20"></div>
                 <button class="btn btn-default" ng-click="modalOpen('create')">새로운 아이템 등록</button>
                 <button class="btn btn-default" ng-show="checkedItemList.length > 0" ng-click="removeSelectedItems()">선택 아이템 삭제</button>
-            </div>
-            <div ng-show="items.length > 0">
-                <div class="vspace-20"></div>
-                <table class="table table-striped table-hover">
-                    <thead>
-                        <tr>
-                            <th>선택</th>
-                            <th>이름</th>
-                            <th>카테고리</th>
-                            <th>설명</th>
-                            <th>아이템 번호</th>
-                            <th>관련 페이지</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr ng-repeat="item in items" ng-click="modalOpen('update', item.id)">
-                            <td><label><input type="checkbox" ng-click="checkItem($event, item.id)"/></label></td>
-                            <td>{{item.name}}</td>
-                            <td>{{item.category}}</td>
-                            <td>{{item.desc}}</td>
-                            <td>{{item.id}}</td>
-                            <td><b ng-repeat="page in item.pages">{{page.name}}{{$last ? '' : ', '}}</b></td>
-                        </tr>
-                    </tbody>
-                </table>
+                <div ng-show="items.length > 0">
+                    <div class="vspace-20"></div>
+                    <table class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>선택</th>
+                                <th>이름</th>
+                                <th>카테고리</th>
+                                <th>설명</th>
+                                <th>아이템 번호</th>
+                                <th>관련 페이지</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="item in items" ng-click="modalOpen('update', item.id)">
+                                <td><label><input type="checkbox" ng-click="checkItem($event, item.id)"/></label></td>
+                                <td>{{item.name}}</td>
+                                <td>{{item.category}}</td>
+                                <td>{{item.desc}}</td>
+                                <td>{{item.id}}</td>
+                                <td><b ng-repeat="page in item.pages">{{page.name}}{{$last ? '' : ', '}}</b></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
