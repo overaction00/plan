@@ -11,5 +11,6 @@
  *= require_self
  *= require bootstrap-3.2.0
  *= require bootstrap-theme-3.2.0
+ *= require angular-growl-0.4.0.min
  *= require common
  */

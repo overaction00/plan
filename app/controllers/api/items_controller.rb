@@ -1,4 +1,4 @@
-class ItemsController < ApplicationController
+class Api::ItemsController < ApplicationController
   def create
     begin
       @page = Page.find(params[:page_id])
@@ -14,12 +14,18 @@ class ItemsController < ApplicationController
   def update
     begin
       @item = Item.find(params[:id])
+
     rescue ActiveRecord::RecordNotFound
       render nothing: true, status: :not_found
     end
-
-    render json: @item.update_attributes(JSON.parse(params[:item])).to_json(include: :pages)
+    if @item.update_attributes(JSON.parse(params[:item]))
+      return render json: @item.to_json(include: :pages)
+    end
+    render nothing: true, status: :bad_request
   end
+
+
+
 
   def search_items
     render json: Item.where(Item.arel_table[:name].matches("%#{params[:q]}%")).limit(10)

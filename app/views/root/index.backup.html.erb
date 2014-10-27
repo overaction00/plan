@@ -1,0 +1,106 @@
+<div class="container">
+    <div class="col-xs-12" ng-controller="PagesController">
+        <div class="col-xs-2" ng-init="index()">
+            <div class="vspace-30"></div>
+            <ul class="nav nav-pills nav-stacked">
+                <li ng-class="{active: page.id === currentPageId}" ng-repeat="page in pages"><a ng-click="show(page.id)">{{page.name}}</a></li>
+            </ul>
+            <div>
+                <div ng-controller="RegisterPageModalController">
+                    <script type="text/ng-template" id="registerPageModal.html">
+                        <div class="modal-header">
+                            <h3 class="modal-title">새로운 페이지 등록</h3>
+                        </div>
+                        <div class="modal-body">
+                            <form name="registerPageForm" method="post" class="register-page-form">
+                                <label for="page-name-input">페이지 이름</label>
+                                <span class="error" ng-show="registerPageForm.pageNameInput.$error.required">Required!</span><br />
+                                <input id="page-name-input" name="pageNameInput" class="form-control" ng-model="pageName" required>
+                                <div class="vspace-30"></div>
+                                <label for="page-desc-input">페이지 설명</label>
+                                <textarea id="page-desc-input" name="pageDescInput" class="form-control" ng-model="pageDesc"></textarea>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                        <button type="button" class="btn btn-default" ng-click="cancel()">취소</button>
+                        <button type="submit" class="btn btn-primary" ng-click="ok()">저장하기</button>
+                        </div>
+                    </script>
+                    <button class="btn btn-default" ng-click="open()">페이지 등록</button>
+                </div>
+            </div>
+        </div>
+        <div class="col-xs-10">
+            <div class="page-header border-row" ng-show="page">
+                <div class="inline-block">
+                    <h1>{{page.name}}<br/><small>{{page.desc}}</small></h1>
+                </div>
+                <div class="pull-right">
+                    <button class="btn btn-default" ng-click="remove(currentPageId)">페이지 삭제하기</button>
+                </div>
+            </div>
+            <div ng-controller="ItemsController" ng-init="init()">
+                <script type="text/ng-template" id="registerItemModal.html">
+                    <div class="modal-header">
+                        <div style="display:inline-block;"><h3 class="modal-title">페이지 아이템 {{mode === "update" ? "수정" : "등록"}}</h3></div>
+                        <div class="btn-group btn-group-sm pull-right" ng-show="mode !== 'update'">
+                            <button type="button" class="btn btn-default" ng-class="{active: mode === 'append'}" ng-click="setMode('append')">검색</button>
+                            <button type="button" class="btn btn-default" ng-class="{active: mode === 'create'}" ng-click="setMode('create')">새로운 아이템</button>
+                        </div>
+                    </div>
+                    <div class="modal-body">
+                        <form name="registerItemForm" method="post" class="register-item-form">
+                            <label for="item-search-input" ng-show="mode === 'append'">아이템 검색</label>
+                            <input id="item-search-input" name="itemSearchInput" class="form-control" ng-show="mode === 'append'" ng-model="itemSearch" typeahead="item for item in searchNames($viewValue)" typeahead-on-select="onTypeAHeadSelect($item)">
+                            <div class="vspace-30"></div>
+                            <label for="item-name-input">아이템 이름</label>
+                            <span class="error" ng-show="registerItemForm.itemNameInput.$error.required">Required!</span><br />
+                            <input id="item-name-input" name="itemNameInput" class="form-control" ng-disabled="!isEditable()" ng-model="itemName" required>
+                            <div class="vspace-30"></div>
+                            <label for="item-category-input">아이템 종류</label>
+                            <span class="error" ng-show="registerItemForm.itemCategoryInput.$error.required">Required!</span><br />
+                            <input id="item-category-input" name="itemCategoryInput" class="form-control" ng-disabled="!isEditable()" ng-model="itemCategory" required>
+                            <div class="vspace-30"></div>
+                            <label for="item-desc-input">아이템 설명</label>
+                            <textarea id="item-desc-input" name="itemDescInput" class="form-control" ng-disabled="!isEditable()" ng-model="itemDesc"></textarea>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-warning" ng-show="mode === 'update'" ng-click="remove()">삭제</button>
+                        <button type="button" class="btn btn-default" ng-click="cancel()">취소</button>
+                        <button type="submit" class="btn btn-primary" ng-click="ok()">저장하기</button>
+                    </div>
+                </script>
+                <div class="vspace-20"></div>
+                <button class="btn btn-default" ng-click="modalOpen('create')">새로운 아이템 등록</button>
+                <button class="btn btn-default" ng-show="checkedItemList.length > 0" ng-click="removeSelectedItems()">선택 아이템 삭제</button>
+                <div ng-show="items.length > 0">
+                    <div class="vspace-20"></div>
+                    <table class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>선택</th>
+                                <th>이름</th>
+                                <th>카테고리</th>
+                                <th>설명</th>
+                                <th>아이템 번호</th>
+                                <th>관련 페이지</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="item in items" ng-click="modalOpen('update', item.id)">
+                                <td><label><input type="checkbox" ng-click="checkItem($event, item.id)"/></label></td>
+                                <td>{{item.name}}</td>
+                                <td>{{item.category}}</td>
+                                <td>{{item.desc}}</td>
+                                <td>{{item.id}}</td>
+                                <td><b ng-repeat="page in item.pages">{{page.name}}{{$last ? '' : ', '}}</b></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

@@ -1,4 +1,4 @@
-class PagesController < ApplicationController
+class Api::PagesController < ApplicationController
   def index
     @pages = Page.all
     render json: @pages
@@ -14,14 +14,12 @@ class PagesController < ApplicationController
   end
 
   def create
-    @page = Page.new(params[:page])
-    render nothing: true, status: :internal_server_error unless @page.save
+    @page = Page.new(JSON.parse(params[:page]))
+    return render nothing: true, status: :internal_server_error unless @page.save
     render json: @page
   end
 
   def destroy
-    ap params
-    ap params[:id]
     begin
       @page = Page.find(params[:id])
     rescue ActiveRecord::RecordNotFound

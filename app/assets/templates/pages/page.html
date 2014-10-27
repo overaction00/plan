@@ -1,0 +1,38 @@
+<div ng-show="page">
+    <div class="border-row">
+        <h1>{{page.name}}<br/><small>{{page.desc}}</small></h1>
+    </div>
+    <div class="vspace-10"></div>
+    <button class="btn btn-default" ng-click="remove(currentPageId)">페이지 삭제하기</button>
+    <div class="vspace-10"></div>
+    <div class="border-row"></div>
+    <div class="vspace-10"></div>
+    <div ng-show="items.length > 0" ng-controller="ItemController">
+        <a class="btn btn-default" ui-sref="page.newItem({id: currentPageId})">아이템 등록</a>
+        <button class="btn btn-default" ng-show="checkedItemList.length > 0" ng-click="removeSelectedItems()">선택 아이템 삭제</button>
+        <div ui-view></div>
+        <div class="vspace-20"></div>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>선택</th>
+                    <th>이름</th>
+                    <th>카테고리</th>
+                    <th>설명</th>
+                    <th>아이템 번호</th>
+                    <th>관련 페이지</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="item in items" ng-click="modalOpen(item.id)">
+                    <td><label><input type="checkbox" ng-click="checkItem($event, item.id)"/></label></td>
+                    <td>{{item.name}}</td>
+                    <td>{{item.category}}</td>
+                    <td>{{item.desc}}</td>
+                    <td>{{item.id}}</td>
+                    <td><b ng-repeat="page in item.pages">{{page.name}}{{$last ? '' : ', '}}</b></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

@@ -14,6 +14,7 @@
 //= require jquery_ujs
 //= require angular-1.3.0
 //= require angular-ui-router-0.2.11
+//= require angular-growl-0.4.0
 //= require bootstrap-3.2.0
 //= require ui-bootstrap-tpls-0.11.2
 //= require bootstrap-typeahead

@@ -1,0 +1,31 @@
+<script type="text/ng-template" id="registerItemModal.html">
+    <div class="modal-header">
+        <div style="display:inline-block;"><h3 class="modal-title">페이지 아이템 {{mode === "update" ? "수정" : "등록"}}</h3></div>
+        <div class="btn-group btn-group-sm pull-right" ng-show="mode !== 'update'">
+            <button type="button" class="btn btn-default" ng-class="{active: mode === 'append'}" ng-click="setMode('append')">검색</button>
+            <button type="button" class="btn btn-default" ng-class="{active: mode === 'create'}" ng-click="setMode('create')">새로운 아이템</button>
+        </div>
+    </div>
+    <div class="modal-body">
+        <form name="registerItemForm" method="post" class="register-item-form">
+            <label for="item-search-input" ng-show="mode === 'append'">아이템 검색</label>
+            <input id="item-search-input" name="itemSearchInput" class="form-control" ng-show="mode === 'append'" ng-model="itemSearch" typeahead="item for item in searchNames($viewValue)" typeahead-on-select="onTypeAHeadSelect($item)">
+            <div class="vspace-30"></div>
+            <label for="item-name-input">아이템 이름</label>
+            <span class="error" ng-show="registerItemForm.itemNameInput.$error.required">Required!</span><br />
+            <input id="item-name-input" name="itemNameInput" class="form-control" ng-disabled="!isEditable()" ng-model="itemName" required>
+            <div class="vspace-30"></div>
+            <label for="item-category-input">아이템 종류</label>
+            <span class="error" ng-show="registerItemForm.itemCategoryInput.$error.required">Required!</span><br />
+            <input id="item-category-input" name="itemCategoryInput" class="form-control" ng-disabled="!isEditable()" ng-model="itemCategory" required>
+            <div class="vspace-30"></div>
+            <label for="item-desc-input">아이템 설명</label>
+            <textarea id="item-desc-input" name="itemDescInput" class="form-control" ng-disabled="!isEditable()" ng-model="itemDesc"></textarea>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-warning" ng-show="mode === 'update'" ng-click="remove()">삭제</button>
+        <button type="button" class="btn btn-default" ng-click="cancel()">취소</button>
+        <button type="submit" class="btn btn-primary" ng-click="ok()">저장하기</button>
+    </div>
+</script>
