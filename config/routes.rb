@@ -9,6 +9,6 @@ Plan::Application.routes.draw do
     match 'search_items', to: 'items#search_items', format: :json
   end
 
-
   root to: 'root#index'
+  match '*path' => 'root#index', via: :get
 end

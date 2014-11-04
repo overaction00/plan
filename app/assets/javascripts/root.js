@@ -24,24 +24,13 @@ root.config(function($stateProvider, $urlRouterProvider) {
             templateUrl: "/assets/pages/page.item.html",
             controller: "ItemEditController"
         });
-}).run(function($rootScope, $state, $stateParams) {
-    $rootScope.$state = $state;
-    $rootScope.$stateParams = $stateParams;
-    $rootScope.$on("$stateChangeSuccess",  function(event, toState, toParams, fromState, fromParams) {
-        $rootScope.previousState_name = fromState.name;
-        $rootScope.previousState_params = fromParams;
-    });
-    $rootScope.back = function() {
-        $state.go($rootScope.previousState_name, $rootScope.previousState_params);
-    };
 });
 
 root.controller("RootController", ["$scope", "$http", "$state","$modal", "$log", function($scope, $http, $state, $modal, $log) {
     $scope.index = function() {
         $http.get("/api/pages").success(function(data){
-            $scope.pages = data;
             $scope.currentPageId = data[0].id;
-            $state.go("page", { id: $scope.pages[0].id });
+            $scope.pages = data;
         }).error(function(data, status) {
             alert("페이지 목록을 불러오는데 실패 했습니다.");
             $log.error(status + ": " + data);

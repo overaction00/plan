@@ -1,13 +1,6 @@
 angular.module("root").controller("PageController", ["$http", "$scope", "$stateParams", "$log", "sharedModelService", function($http, $scope, $stateParams, $log, sharedModelService) {
     $scope.show = function(id) {
-        $http.get("/api/pages/" + id).success(function(data){
-            $scope.page = data;
-
-        }).error(function(data, status) {
-            alert("페이지를 불러오는데 실패 했습니다.");
-            $log.error(status + ": " + data);
-            $scope.page = undefined;
-        });
+        $scope.pagesPromise =  $http.get("/api/pages/" + id);
     };
     $scope.remove = function(id) {
         if (window.confirm("페이지를 삭제할까요?")) {
@@ -47,6 +40,13 @@ angular.module("root").controller("PageController", ["$http", "$scope", "$stateP
     });
     $scope.$parent.currentPageId = $stateParams.id;
     $scope.show($stateParams.id);
+    $scope.pagesPromise.then(function(response){
+        $scope.page = response.data;
+    }, function(response) {
+        alert("페이지를 불러오는데 실패 했습니다.");
+        $log.error(status + ": " + response.data);
+        $scope.page = undefined;
+    });
 }]);
 
 angular.module("root").controller("PageItemController", ["$http", "$scope", "$modal", "$state", "$stateParams", "$log", function($http, $scope, $modal, $state, $stateParams, $log) {
@@ -59,8 +59,8 @@ angular.module("root").controller("PageItemController", ["$http", "$scope", "$mo
         });
         modalInstance.result.then(function () {
         }, function () {
-            $scope.back();
             $log.info('Modal dismissed at: ' + new Date());
+            $state.go("page", {id: $stateParams.id});
         });
     };
     $scope.open();
@@ -129,4 +129,7 @@ angular.module("root").controller('CreateItemModalController',
         $scope.itemDesc = "";
         $scope.itemSearch = "";
     };
+    $scope.$on("$stateChangeStart",  function() {
+        $modalInstance.dismiss("change page");
+    });
 }]);

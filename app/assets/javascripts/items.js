@@ -1,14 +1,8 @@
 angular.module("root").controller("ItemController",
-    ["$http", "$scope", "$state","$modal", "$log", "sharedModelService",
-    function($http, $scope, $state, $modal, $log, sharedModelService) {
+    ["$http", "$scope", "$state", "$stateParams", "$modal", "$log", "sharedModelService",
+    function($http, $scope, $state, $stateParams, $modal, $log, sharedModelService) {
     $scope.pageItems = function(pageId) {
-        $http.get("/api/pages/" + pageId + "/items").success(function(data) {
-            $scope.items = data;
-        }).error(function(data, status) {
-            alert("아이템 목록을 불러오는데 실패 했습니다.");
-            $log.error(status + ": " + data);
-            $scope.items = undefined;
-        });
+        $scope.pageItemsPromise = $http.get("/api/pages/" + pageId + "/items");
     };
     $scope.checkItem = function(e, id) {
         e.stopPropagation();
@@ -165,13 +159,19 @@ angular.module("root").controller("ItemController",
     $scope.modalOpen = function(itemId) {
         $state.go("page.editItem", {id: $scope.currentPageId, itemId: itemId});
     };
-    $scope.pageItems($scope.currentPageId);
+    $scope.pageItems($stateParams.id);
+    $scope.pageItemsPromise.then(function(response) {
+        $scope.items = response.data;
+    }, function(response) {
+        alert("아이템 목록을 불러오는데 실패 했습니다.");
+        $log.error(status + ": " + response.status);
+        $scope.items = undefined;
+    });
     $scope.checkedItemList = [];
 }]);
 
 angular.module("root").controller("ItemEditController", ["$http", "$scope", "$modal", "$state", "$stateParams", "$log", function($http, $scope, $modal, $state, $stateParams, $log) {
     $scope.mode = "update";
-    $scope.item = _.findWhere($scope.items, {id: $stateParams.itemId});
     $scope.open = function () {
         var modalInstance = $modal.open({
             templateUrl: "registerItemModal.html",
@@ -180,16 +180,16 @@ angular.module("root").controller("ItemEditController", ["$http", "$scope", "$mo
         });
         modalInstance.result.then(function () {
         }, function () {
-            $scope.back();
             $log.info('Modal dismissed at: ' + new Date());
+            $state.go("page", {id: $stateParams.id});
         });
     };
     $scope.open();
 }]);
 
 angular.module("root").controller('EditItemModalController',
-    ["$scope", "$http", "$modalInstance", "sharedModelService",
-    function ($scope, $http, $modalInstance, sharedModelService) {
+    ["$scope", "$http", "$modalInstance", "$stateParams", "sharedModelService",
+    function ($scope, $http, $modalInstance, $stateParams, sharedModelService) {
     $scope.ok = function () {
         sharedModelService.requestBroadcast("updateItem", {
             id: $scope.itemId,
@@ -220,8 +220,17 @@ angular.module("root").controller('EditItemModalController',
     $scope.isEditable = function() {
         return true;
     };
-    $scope.itemId = $scope.item.id;
-    $scope.itemName = $scope.item.name;
-    $scope.itemCategory = $scope.item.category;
-    $scope.itemDesc = $scope.item.desc;
+    $scope.$on("$stateChangeStart",  function() {
+        $modalInstance.dismiss("change page");
+    });
+    $scope.init = function() {
+        $scope.pageItemsPromise.then(function() {
+            $scope.item = _.findWhere($scope.items, {id: Number($stateParams.itemId)});
+            $scope.itemId = $scope.item.id;
+            $scope.itemName = $scope.item.name;
+            $scope.itemCategory = $scope.item.category;
+            $scope.itemDesc = $scope.item.desc;
+        });
+    };
+    $scope.init();
 }]);
